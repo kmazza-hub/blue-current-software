@@ -271,3 +271,17 @@ input:focus, textarea:focus {
   .twoCol { grid-template-columns: 1fr; }
   .nav { display: none; }
 }
+
+.section {
+  padding: 48px 0 24px;
+  position: relative;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 18, 32, 0.85);
+  backdrop-filter: blur(2px);
+  z-index: -1;
+}
