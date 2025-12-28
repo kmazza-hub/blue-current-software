@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Blue Current Software — Always in motion.</title>
@@ -10,20 +9,16 @@
       name="description"
       content="Blue Current Software helps founders and small teams fix bugs, finish features, and deploy React + Node.js applications with confidence."
     />
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="Blue Current Software — Always in motion." />
-    <meta
-      property="og:description"
-      content="Fix bugs, finish features, and deploy React + Node.js apps when projects are stuck, broken, or close to launch."
-    />
-    <meta property="og:type" content="website" />
-
-    <!-- Nice-to-have -->
-    <meta name="theme-color" content="#0b1220" />
-    <meta name="robots" content="index,follow" />
   </head>
+
   <body>
+    <!-- Hidden Netlify form for build-time detection -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

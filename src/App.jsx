@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 
 const services = [
@@ -16,6 +17,29 @@ const whoWeHelp = [
 ];
 
 export default function App() {
+  const [formStatus, setFormStatus] = useState("idle"); // idle | sending | success | error
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormStatus("sending");
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+      await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData).toString(),
+      });
+
+      form.reset();
+      setFormStatus("success");
+    } catch (err) {
+      setFormStatus("error");
+    }
+  };
+
   return (
     <div className="page">
       <header className="header">
@@ -124,13 +148,14 @@ export default function App() {
             Tell us what’s stuck. We’ll reply with the fastest path to getting it working smoothly.
           </p>
 
-          {/* Netlify Forms (works on Netlify without a backend) */}
+          {/* Netlify Forms + JS submit (prevents 404 redirect) */}
           <form
             className="form"
             name="contact"
             method="POST"
             data-netlify="true"
             netlify-honeypot="bot-field"
+            onSubmit={handleSubmit}
           >
             <input type="hidden" name="form-name" value="contact" />
             <p className="hidden">
@@ -154,20 +179,30 @@ export default function App() {
               <textarea name="message" rows="5" required />
             </label>
 
-            <button className="button primary" type="submit">
-              Send message
+            <button className="button primary" type="submit" disabled={formStatus === "sending"}>
+              {formStatus === "sending" ? "Sending..." : "Send message"}
             </button>
 
-            <p className="finePrint">
-  Prefer email? Send a note to{" "}
-  <a
-    href="mailto:bluecurrentsoftware@gmail.com"
-    className="mono"
-  >
-    bluecurrentsoftware@gmail.com
-  </a>
-</p>
+            {formStatus === "success" && (
+              <p className="finePrint">✅ Message sent! We’ll get back to you soon.</p>
+            )}
 
+            {formStatus === "error" && (
+              <p className="finePrint">
+                ❌ Something went wrong. Please email us directly at{" "}
+                <a href="mailto:bluecurrentsoftware@gmail.com" className="mono">
+                  bluecurrentsoftware@gmail.com
+                </a>
+                .
+              </p>
+            )}
+
+            <p className="finePrint">
+              Prefer email? Send a note to{" "}
+              <a href="mailto:bluecurrentsoftware@gmail.com" className="mono">
+                bluecurrentsoftware@gmail.com
+              </a>
+            </p>
           </form>
         </section>
       </main>
