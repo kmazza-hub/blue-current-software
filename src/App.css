@@ -1,6 +1,6 @@
 :root {
   --bg: #0b1220;
-  --card: rgba(255, 255, 255, 0.06);
+  --card: rgba(255, 255, 255, 0.07);
   --text: rgba(255, 255, 255, 0.92);
   --muted: rgba(255, 255, 255, 0.72);
   --border: rgba(255, 255, 255, 0.12);
@@ -13,16 +13,31 @@ html, body, #root {
   height: 100%;
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  background: radial-gradient(900px 500px at 20% 10%, rgba(88, 167, 255, 0.22), transparent 60%),
-              radial-gradient(700px 500px at 80% 20%, rgba(0, 255, 198, 0.12), transparent 60%),
-              var(--bg);
   color: var(--text);
+  background-color: var(--bg);
+}
+
+/* Prevent weird horizontal overflow + keep background steady */
+body {
+  overflow-x: hidden;
+}
+
+/* Darker, more controlled background (fixes the "white/minty panel" on wide screens) */
+#root {
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 520px at 22% 8%, rgba(88, 167, 255, 0.16), transparent 62%),
+    radial-gradient(820px 560px at 78% 18%, rgba(0, 255, 198, 0.08), transparent 65%),
+    radial-gradient(900px 700px at 50% 90%, rgba(255, 255, 255, 0.03), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
 }
 
 a { color: inherit; text-decoration: none; }
 a:hover { opacity: 0.9; }
 
 .page {
+  width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 22px 18px 50px;
@@ -91,7 +106,7 @@ a:hover { opacity: 0.9; }
   padding: 34px 18px;
   border: 1px solid var(--border);
   border-radius: 22px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
   box-shadow: var(--shadow);
 }
 
@@ -155,7 +170,7 @@ a:hover { opacity: 0.9; }
 }
 
 .section {
-  padding: 28px 0 6px;
+  padding: 34px 0 10px;
 }
 
 .section h2 {
@@ -170,12 +185,14 @@ a:hover { opacity: 0.9; }
   gap: 14px;
 }
 
+/* Makes cards read better on all backgrounds */
 .card {
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.07);
   padding: 16px;
   box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
 }
 
 .card h3 {
@@ -219,10 +236,11 @@ a:hover { opacity: 0.9; }
 .form {
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.07);
   padding: 16px;
   box-shadow: var(--shadow);
   max-width: 720px;
+  backdrop-filter: blur(6px);
 }
 
 label {
@@ -270,18 +288,4 @@ input:focus, textarea:focus {
   .grid { grid-template-columns: 1fr; }
   .twoCol { grid-template-columns: 1fr; }
   .nav { display: none; }
-}
-
-.section {
-  padding: 48px 0 24px;
-  position: relative;
-}
-
-.section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(11, 18, 32, 0.85);
-  backdrop-filter: blur(2px);
-  z-index: -1;
 }
