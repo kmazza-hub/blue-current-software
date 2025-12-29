@@ -121,13 +121,23 @@ export default function App() {
             method="GET"
           >
             <label>
-              Name
-              <input name="subject" type="text" placeholder="Project inquiry from…" required />
+              Subject
+              <input
+                name="subject"
+                type="text"
+                placeholder="Project inquiry"
+                required
+              />
             </label>
 
             <label>
-              Your Email
-              <input name="cc" type="email" placeholder="your@email.com" required />
+              Your Email (CC)
+              <input
+                name="cc"
+                type="email"
+                placeholder="your@email.com"
+                required
+              />
             </label>
 
             <label>
