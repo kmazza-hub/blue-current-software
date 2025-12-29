@@ -15,8 +15,46 @@ const whoWeHelp = [
   "Agencies needing reliable support",
 ];
 
-const emailTo = "bluecurrentsoftware@gmail.com";
+const work = [
+  {
+    title: "Soothing Baby App (MERN + Auth)",
+    context: "Capstone build focused on calm UX, embeds, and auth flows.",
+    bullets: [
+      "JWT auth (signup/signin), protected routes, user context",
+      "Feature modules: favorites, uploads, timers, responsive UI",
+      "Deployment-ready structure and API integration patterns",
+    ],
+    tags: ["React", "Node", "Express", "MongoDB", "JWT"],
+    linkLabel: "View project",
+    href: "#contact",
+  },
+  {
+    title: "Travel Essentials App (Vite + APIs)",
+    context: "Fast destination lookup + curated travel tips experience.",
+    bullets: [
+      "Weather lookup by destination",
+      "Clean card-based UI with strong visual hierarchy",
+      "Deployed with Netlify and production build pipeline",
+    ],
+    tags: ["React", "Vite", "APIs", "Netlify"],
+    linkLabel: "Request a walkthrough",
+    href: "#contact",
+  },
+  {
+    title: "Bug Fix & Deploy Rescue (Typical Engagement)",
+    context: "The exact work we do most often for founders.",
+    bullets: [
+      "Triage issues, fix broken UI / API calls, and stabilize releases",
+      "Ship missing features without over-engineering",
+      "Deploy to Netlify/Vercel/Render with env + build sanity checks",
+    ],
+    tags: ["React", "Debugging", "Deployments"],
+    linkLabel: "Get help like this",
+    href: "#contact",
+  },
+];
 
+const emailTo = "bluecurrentsoftware@gmail.com";
 const emailSubject = "Project Inquiry - Blue Current Software";
 const emailBody =
   "Hi Blue Current Software,%0D%0A%0D%0A" +
@@ -49,6 +87,7 @@ export default function App() {
 
         <nav className="nav">
           <a href="#services">Services</a>
+          <a href="#work">Work</a>
           <a href="#how">How we work</a>
           <a href="#contact" className="navCta">
             Contact
@@ -68,8 +107,8 @@ export default function App() {
             <a className="button primary" href="#contact">
               Get it moving
             </a>
-            <a className="button ghost" href="#services">
-              See services
+            <a className="button ghost" href="#work">
+              See work
             </a>
           </div>
 
@@ -92,6 +131,45 @@ export default function App() {
                   Clear scope, clean implementation, and practical solutions that keep your product
                   moving forward.
                 </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="section" id="work">
+          <div className="sectionHeader">
+            <h2>Selected work</h2>
+            <p className="muted">
+              A few examples of the kind of work we deliver—clean UX, stable systems, and real
+              momentum.
+            </p>
+          </div>
+
+          <div className="workGrid">
+            {work.map((p) => (
+              <div key={p.title} className="workCard">
+                <div className="workTop">
+                  <h3>{p.title}</h3>
+                  <p className="muted">{p.context}</p>
+                </div>
+
+                <ul className="workList">
+                  {p.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+
+                <div className="tagRow" aria-label="Tech tags">
+                  {p.tags.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </div>
+
+                <div className="workCta">
+                  <a className="button ghost" href={p.href}>
+                    {p.linkLabel}
+                  </a>
+                </div>
               </div>
             ))}
           </div>
@@ -138,11 +216,8 @@ export default function App() {
 
         <section className="section" id="contact">
           <h2>Contact</h2>
-          <p className="sub">
-            Send us an email and we’ll reply quickly. No forms, no friction.
-          </p>
+          <p className="sub">Send us an email and we’ll reply quickly.</p>
 
-          {/* Button-style contact (no "not secure" warning) */}
           <div className="form">
             <div className="heroCtas" style={{ marginTop: 0 }}>
               <a className="button primary" href={mailtoLink}>
