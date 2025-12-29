@@ -15,12 +15,32 @@ const whoWeHelp = [
   "Agencies needing reliable support",
 ];
 
+const emailTo = "bluecurrentsoftware@gmail.com";
+
+const emailSubject = "Project Inquiry - Blue Current Software";
+const emailBody =
+  "Hi Blue Current Software,%0D%0A%0D%0A" +
+  "I need help with:%0D%0A%0D%0A" +
+  "[Describe your project here]%0D%0A%0D%0A" +
+  "Timeline:%0D%0A" +
+  "[e.g., ASAP / This week / This month]%0D%0A%0D%0A" +
+  "Tech stack:%0D%0A" +
+  "[e.g., React / Node / MongoDB / Deployment]%0D%0A%0D%0A" +
+  "Thanks,%0D%0A" +
+  "[Your Name]";
+
+const mailtoLink = `mailto:${emailTo}?subject=${encodeURIComponent(
+  emailSubject
+)}&body=${emailBody}`;
+
 export default function App() {
   return (
     <div className="page">
       <header className="header">
         <div className="brand">
-          <div className="logo" aria-hidden="true">🌊</div>
+          <div className="logo" aria-hidden="true">
+            🌊
+          </div>
           <div>
             <div className="name">Blue Current Software</div>
             <div className="tagline">Always in motion.</div>
@@ -30,7 +50,9 @@ export default function App() {
         <nav className="nav">
           <a href="#services">Services</a>
           <a href="#how">How we work</a>
-          <a href="#contact" className="navCta">Contact</a>
+          <a href="#contact" className="navCta">
+            Contact
+          </a>
         </nav>
       </header>
 
@@ -43,11 +65,15 @@ export default function App() {
           </p>
 
           <div className="heroCtas">
-            <a className="button primary" href="#contact">Get it moving</a>
-            <a className="button ghost" href="#services">See services</a>
+            <a className="button primary" href="#contact">
+              Get it moving
+            </a>
+            <a className="button ghost" href="#services">
+              See services
+            </a>
           </div>
 
-          <div className="heroBadges">
+          <div className="heroBadges" aria-label="Core capabilities">
             <span>React</span>
             <span>Node.js</span>
             <span>Express</span>
@@ -99,11 +125,13 @@ export default function App() {
           </div>
         </section>
 
-        <section className="section manifesto">
+        <section className="section manifesto" aria-label="Manifesto">
           <h2>Our philosophy</h2>
           <p>
             Progress comes from movement—not perfection. We help teams move forward when projects
-            stall, systems break, or ideas feel just out of reach.
+            stall, systems break, or ideas feel just out of reach. Through calm problem-solving,
+            thoughtful engineering, and continuous improvement, we bring momentum back to software
+            that matters.
           </p>
           <p className="emphasis">Always in motion.</p>
         </section>
@@ -111,56 +139,33 @@ export default function App() {
         <section className="section" id="contact">
           <h2>Contact</h2>
           <p className="sub">
-            Tell us what’s stuck. Clicking send will open your email client.
+            Send us an email and we’ll reply quickly. No forms, no friction.
           </p>
 
-          {/* Mailto-based contact form */}
-          <form
-            className="form"
-            action="mailto:bluecurrentsoftware@gmail.com"
-            method="GET"
-          >
-            <label>
-              Subject
-              <input
-                name="subject"
-                type="text"
-                placeholder="Project inquiry"
-                required
-              />
-            </label>
+          {/* Button-style contact (no "not secure" warning) */}
+          <div className="form">
+            <div className="heroCtas" style={{ marginTop: 0 }}>
+              <a className="button primary" href={mailtoLink}>
+                Email Blue Current
+              </a>
 
-            <label>
-              Your Email (CC)
-              <input
-                name="cc"
-                type="email"
-                placeholder="your@email.com"
-                required
-              />
-            </label>
-
-            <label>
-              Message
-              <textarea name="body" rows="5" required />
-            </label>
-
-            <button className="button primary" type="submit">
-              Send via Email
-            </button>
+              <a className="button ghost" href={`mailto:${emailTo}`}>
+                Open blank email
+              </a>
+            </div>
 
             <p className="finePrint">
-              Or email directly at{" "}
-              <a href="mailto:bluecurrentsoftware@gmail.com" className="mono">
-                bluecurrentsoftware@gmail.com
+              Email:{" "}
+              <a href={`mailto:${emailTo}`} className="mono">
+                {emailTo}
               </a>
             </p>
-          </form>
+          </div>
         </section>
       </main>
 
       <footer className="footer">
-        © {new Date().getFullYear()} Blue Current Software. Always in motion.
+        <div>© {new Date().getFullYear()} Blue Current Software. Always in motion.</div>
       </footer>
     </div>
   );
