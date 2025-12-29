@@ -25,7 +25,7 @@ const work = [
       "Deployment-ready structure and API integration patterns",
     ],
     tags: ["React", "Node", "Express", "MongoDB", "JWT"],
-    linkLabel: "View project",
+    linkLabel: "Request a walkthrough",
     href: "#contact",
   },
   {
@@ -42,7 +42,7 @@ const work = [
   },
   {
     title: "Bug Fix & Deploy Rescue (Typical Engagement)",
-    context: "The exact work we do most often for founders.",
+    context: "The kind of work we do most often for founders.",
     bullets: [
       "Triage issues, fix broken UI / API calls, and stabilize releases",
       "Ship missing features without over-engineering",
@@ -54,22 +54,62 @@ const work = [
   },
 ];
 
-const emailTo = "bluecurrentsoftware@gmail.com";
-const emailSubject = "Project Inquiry - Blue Current Software";
-const emailBody =
-  "Hi Blue Current Software,%0D%0A%0D%0A" +
-  "I need help with:%0D%0A%0D%0A" +
-  "[Describe your project here]%0D%0A%0D%0A" +
-  "Timeline:%0D%0A" +
-  "[e.g., ASAP / This week / This month]%0D%0A%0D%0A" +
-  "Tech stack:%0D%0A" +
-  "[e.g., React / Node / MongoDB / Deployment]%0D%0A%0D%0A" +
-  "Thanks,%0D%0A" +
-  "[Your Name]";
+const packages = [
+  {
+    name: "Fix & Ship",
+    price: "Starting at $149",
+    time: "Same day / 24–48 hours",
+    bestFor: "Bug fixes, broken UI, failing builds, small tweaks",
+    includes: [
+      "Quick triage + plan",
+      "Fixes shipped + tested",
+      "Short summary of what changed",
+    ],
+  },
+  {
+    name: "Feature Boost",
+    price: "Starting at $399",
+    time: "2–4 days",
+    bestFor: "Finish one feature end-to-end",
+    includes: [
+      "Frontend + backend integration",
+      "Edge cases + error handling",
+      "Deploy-ready updates",
+    ],
+  },
+  {
+    name: "Launch Assist",
+    price: "Starting at $299",
+    time: "1–3 days",
+    bestFor: "Deploy, env vars, “works local but not live”",
+    includes: [
+      "Deployment setup + troubleshooting",
+      "Env var + build sanity checks",
+      "Post-launch QA pass",
+    ],
+  },
+];
 
-const mailtoLink = `mailto:${emailTo}?subject=${encodeURIComponent(
-  emailSubject
-)}&body=${emailBody}`;
+const emailTo = "bluecurrentsoftware@gmail.com";
+const baseSubject = "Project Inquiry - Blue Current Software";
+
+const buildMailto = ({ subjectSuffix, bodyIntro }) => {
+  const subject = subjectSuffix ? `${baseSubject} (${subjectSuffix})` : baseSubject;
+
+  const body =
+    `Hi Blue Current Software,\n\n` +
+    (bodyIntro ? `${bodyIntro}\n\n` : "") +
+    `Project link (if any):\n[URL]\n\n` +
+    `What’s stuck / what you want done:\n[Describe here]\n\n` +
+    `Timeline:\n[ASAP / This week / This month]\n\n` +
+    `Tech stack:\n[React / Node / MongoDB / Deployment]\n\n` +
+    `Budget range (optional):\n[ ]\n\n` +
+    `Thanks,\n[Your Name]`;
+
+  return `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
+
+const defaultMailto = buildMailto({});
 
 export default function App() {
   return (
@@ -87,6 +127,7 @@ export default function App() {
 
         <nav className="nav">
           <a href="#services">Services</a>
+          <a href="#packages">Packages</a>
           <a href="#work">Work</a>
           <a href="#how">How we work</a>
           <a href="#contact" className="navCta">
@@ -107,8 +148,8 @@ export default function App() {
             <a className="button primary" href="#contact">
               Get it moving
             </a>
-            <a className="button ghost" href="#work">
-              See work
+            <a className="button ghost" href="#packages">
+              View packages
             </a>
           </div>
 
@@ -136,6 +177,59 @@ export default function App() {
           </div>
         </section>
 
+        {/* Packages */}
+        <section className="section" id="packages">
+          <div className="sectionHeader">
+            <h2>Packages</h2>
+            <p className="muted">
+              Budget-friendly starting rates. Fast turnaround. Clear scope. If you’re stuck, we’ll
+              get it moving.
+            </p>
+          </div>
+
+          <div className="pkgGrid">
+            {packages.map((p) => (
+              <div key={p.name} className="pkgCard">
+                <div className="pkgTop">
+                  <h3>{p.name}</h3>
+                  <div className="pkgPrice">{p.price}</div>
+                  <div className="pkgMeta">{p.time}</div>
+                </div>
+
+                <p className="muted pkgBestFor">
+                  <strong>Best for:</strong> {p.bestFor}
+                </p>
+
+                <ul className="pkgList">
+                  {p.includes.map((i) => (
+                    <li key={i}>{i}</li>
+                  ))}
+                </ul>
+
+                <div className="pkgCtas">
+                  <a
+                    className="button primary"
+                    href={buildMailto({
+                      subjectSuffix: p.name,
+                      bodyIntro: `I’m interested in the ${p.name} package.`,
+                    })}
+                  >
+                    Choose {p.name}
+                  </a>
+                  <a className="button ghost" href="#contact">
+                    Ask a question
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="finePrint pkgFine">
+            *Starting prices depend on scope. You’ll always get a clear plan before work begins.
+          </p>
+        </section>
+
+        {/* Work */}
         <section className="section" id="work">
           <div className="sectionHeader">
             <h2>Selected work</h2>
@@ -166,8 +260,8 @@ export default function App() {
                 </div>
 
                 <div className="workCta">
-                  <a className="button ghost" href={p.href}>
-                    {p.linkLabel}
+                  <a className="button ghost" href={defaultMailto}>
+                    Request details
                   </a>
                 </div>
               </div>
@@ -220,10 +314,9 @@ export default function App() {
 
           <div className="form">
             <div className="heroCtas" style={{ marginTop: 0 }}>
-              <a className="button primary" href={mailtoLink}>
+              <a className="button primary" href={defaultMailto}>
                 Email Blue Current
               </a>
-
               <a className="button ghost" href={`mailto:${emailTo}`}>
                 Open blank email
               </a>

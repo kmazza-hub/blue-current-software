@@ -364,3 +364,138 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 }
+
+/* Shared helper */
+.sectionHeader {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 75ch;
+}
+
+/* Work section */
+.workGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.workCard {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+  display: grid;
+  gap: 12px;
+  min-height: 260px;
+}
+
+.workTop h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.workList {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 14px;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tagRow span {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Packages section */
+.pkgGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.pkgCard {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.085);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+  display: grid;
+  gap: 12px;
+}
+
+.pkgTop {
+  display: grid;
+  gap: 6px;
+}
+
+.pkgTop h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.pkgPrice {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pkgMeta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pkgBestFor {
+  margin: 0;
+  font-size: 14px;
+}
+
+.pkgList {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 14px;
+}
+
+.pkgCtas {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pkgFine {
+  margin-top: 12px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .workGrid {
+    grid-template-columns: 1fr;
+  }
+  .pkgGrid {
+    grid-template-columns: 1fr;
+  }
+}
