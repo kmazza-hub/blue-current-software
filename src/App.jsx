@@ -114,27 +114,32 @@ const work = [
 export default function App() {
   return (
     <div className="page">
-      <header className="header">
-        <div className="brand">
-          <div className="logo" aria-hidden="true">
-            🌊
-          </div>
-          <div>
-            <div className="name">Blue Current Software</div>
-            <div className="tagline">Always in motion.</div>
-          </div>
-        </div>
+    <header className="header">
+  <div className="brand">
+    <div className="logoImageWrap">
+      <img
+        src="/blue-current-logo.png"
+        alt="Blue Current Software logo"
+        className="logoImage"
+      />
+    </div>
+    <div>
+      <div className="name">Blue Current Software</div>
+      <div className="tagline">Always in motion.</div>
+    </div>
+  </div>
 
-        <nav className="nav">
-          <a href="#services">Services</a>
-          <a href="#packages">Packages</a>
-          <a href="#work">Work</a>
-          <a href="#how">How we work</a>
-          <a href="#contact" className="navCta">
-            Contact
-          </a>
-        </nav>
-      </header>
+  <nav className="nav">
+    <a href="#services">Services</a>
+    <a href="#packages">Packages</a>
+    <a href="#work">Work</a>
+    <a href="#how">How we work</a>
+    <a href="#contact" className="navCta">
+      Contact
+    </a>
+  </nav>
+</header>
+
 
       <main>
         <section className="hero">
