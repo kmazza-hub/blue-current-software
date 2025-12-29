@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./App.css";
 
 const services = [
@@ -17,36 +16,11 @@ const whoWeHelp = [
 ];
 
 export default function App() {
-  const [formStatus, setFormStatus] = useState("idle"); // idle | sending | success | error
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormStatus("sending");
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    try {
-      await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData).toString(),
-      });
-
-      form.reset();
-      setFormStatus("success");
-    } catch (err) {
-      setFormStatus("error");
-    }
-  };
-
   return (
     <div className="page">
       <header className="header">
         <div className="brand">
-          <div className="logo" aria-hidden="true">
-            🌊
-          </div>
+          <div className="logo" aria-hidden="true">🌊</div>
           <div>
             <div className="name">Blue Current Software</div>
             <div className="tagline">Always in motion.</div>
@@ -56,9 +30,7 @@ export default function App() {
         <nav className="nav">
           <a href="#services">Services</a>
           <a href="#how">How we work</a>
-          <a href="#contact" className="navCta">
-            Contact
-          </a>
+          <a href="#contact" className="navCta">Contact</a>
         </nav>
       </header>
 
@@ -71,15 +43,11 @@ export default function App() {
           </p>
 
           <div className="heroCtas">
-            <a className="button primary" href="#contact">
-              Get it moving
-            </a>
-            <a className="button ghost" href="#services">
-              See services
-            </a>
+            <a className="button primary" href="#contact">Get it moving</a>
+            <a className="button ghost" href="#services">See services</a>
           </div>
 
-          <div className="heroBadges" aria-label="Core capabilities">
+          <div className="heroBadges">
             <span>React</span>
             <span>Node.js</span>
             <span>Express</span>
@@ -131,13 +99,11 @@ export default function App() {
           </div>
         </section>
 
-        <section className="section manifesto" aria-label="Manifesto">
+        <section className="section manifesto">
           <h2>Our philosophy</h2>
           <p>
             Progress comes from movement—not perfection. We help teams move forward when projects
-            stall, systems break, or ideas feel just out of reach. Through calm problem-solving,
-            thoughtful engineering, and continuous improvement, we bring momentum back to software
-            that matters.
+            stall, systems break, or ideas feel just out of reach.
           </p>
           <p className="emphasis">Always in motion.</p>
         </section>
@@ -145,60 +111,36 @@ export default function App() {
         <section className="section" id="contact">
           <h2>Contact</h2>
           <p className="sub">
-            Tell us what’s stuck. We’ll reply with the fastest path to getting it working smoothly.
+            Tell us what’s stuck. Clicking send will open your email client.
           </p>
 
-          {/* Netlify Forms + JS submit (prevents 404 redirect) */}
+          {/* Mailto-based contact form */}
           <form
             className="form"
-            name="contact"
-            method="POST"
-            data-netlify="true"
-            netlify-honeypot="bot-field"
-            onSubmit={handleSubmit}
+            action="mailto:bluecurrentsoftware@gmail.com"
+            method="GET"
           >
-            <input type="hidden" name="form-name" value="contact" />
-            <p className="hidden">
-              <label>
-                Don’t fill this out: <input name="bot-field" />
-              </label>
-            </p>
-
             <label>
               Name
-              <input name="name" type="text" autoComplete="name" required />
+              <input name="subject" type="text" placeholder="Project inquiry from…" required />
             </label>
 
             <label>
-              Email
-              <input name="email" type="email" autoComplete="email" required />
+              Your Email
+              <input name="cc" type="email" placeholder="your@email.com" required />
             </label>
 
             <label>
-              What do you need help with?
-              <textarea name="message" rows="5" required />
+              Message
+              <textarea name="body" rows="5" required />
             </label>
 
-            <button className="button primary" type="submit" disabled={formStatus === "sending"}>
-              {formStatus === "sending" ? "Sending..." : "Send message"}
+            <button className="button primary" type="submit">
+              Send via Email
             </button>
 
-            {formStatus === "success" && (
-              <p className="finePrint">✅ Message sent! We’ll get back to you soon.</p>
-            )}
-
-            {formStatus === "error" && (
-              <p className="finePrint">
-                ❌ Something went wrong. Please email us directly at{" "}
-                <a href="mailto:bluecurrentsoftware@gmail.com" className="mono">
-                  bluecurrentsoftware@gmail.com
-                </a>
-                .
-              </p>
-            )}
-
             <p className="finePrint">
-              Prefer email? Send a note to{" "}
+              Or email directly at{" "}
               <a href="mailto:bluecurrentsoftware@gmail.com" className="mono">
                 bluecurrentsoftware@gmail.com
               </a>
@@ -208,7 +150,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        <div>© {new Date().getFullYear()} Blue Current Software. Always in motion.</div>
+        © {new Date().getFullYear()} Blue Current Software. Always in motion.
       </footer>
     </div>
   );
