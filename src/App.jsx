@@ -15,81 +15,6 @@ const whoWeHelp = [
   "Agencies needing reliable support",
 ];
 
-const work = [
-  {
-    title: "Soothing Baby App (MERN + Auth)",
-    context: "Capstone build focused on calm UX, embeds, and auth flows.",
-    bullets: [
-      "JWT auth (signup/signin), protected routes, user context",
-      "Feature modules: favorites, uploads, timers, responsive UI",
-      "Deployment-ready structure and API integration patterns",
-    ],
-    tags: ["React", "Node", "Express", "MongoDB", "JWT"],
-    linkLabel: "Request a walkthrough",
-    href: "#contact",
-  },
-  {
-    title: "Travel Essentials App (Vite + APIs)",
-    context: "Fast destination lookup + curated travel tips experience.",
-    bullets: [
-      "Weather lookup by destination",
-      "Clean card-based UI with strong visual hierarchy",
-      "Deployed with Netlify and production build pipeline",
-    ],
-    tags: ["React", "Vite", "APIs", "Netlify"],
-    linkLabel: "Request a walkthrough",
-    href: "#contact",
-  },
-  {
-    title: "Bug Fix & Deploy Rescue (Typical Engagement)",
-    context: "The kind of work we do most often for founders.",
-    bullets: [
-      "Triage issues, fix broken UI / API calls, and stabilize releases",
-      "Ship missing features without over-engineering",
-      "Deploy to Netlify/Vercel/Render with env + build sanity checks",
-    ],
-    tags: ["React", "Debugging", "Deployments"],
-    linkLabel: "Get help like this",
-    href: "#contact",
-  },
-];
-
-const packages = [
-  {
-    name: "Fix & Ship",
-    price: "Starting at $149",
-    time: "Same day / 24–48 hours",
-    bestFor: "Bug fixes, broken UI, failing builds, small tweaks",
-    includes: [
-      "Quick triage + plan",
-      "Fixes shipped + tested",
-      "Short summary of what changed",
-    ],
-  },
-  {
-    name: "Feature Boost",
-    price: "Starting at $399",
-    time: "2–4 days",
-    bestFor: "Finish one feature end-to-end",
-    includes: [
-      "Frontend + backend integration",
-      "Edge cases + error handling",
-      "Deploy-ready updates",
-    ],
-  },
-  {
-    name: "Launch Assist",
-    price: "Starting at $299",
-    time: "1–3 days",
-    bestFor: "Deploy, env vars, “works local but not live”",
-    includes: [
-      "Deployment setup + troubleshooting",
-      "Env var + build sanity checks",
-      "Post-launch QA pass",
-    ],
-  },
-];
-
 const emailTo = "bluecurrentsoftware@gmail.com";
 const baseSubject = "Project Inquiry - Blue Current Software";
 
@@ -110,6 +35,69 @@ const buildMailto = ({ subjectSuffix, bodyIntro }) => {
 };
 
 const defaultMailto = buildMailto({});
+
+const packages = [
+  {
+    name: "Fix & Ship",
+    price: "Starting at $149",
+    time: "Same day / 24–48 hours",
+    bestFor: "Bug fixes, broken UI, failing builds, small tweaks",
+    includes: ["Quick triage + plan", "Fixes shipped + tested", "Short summary of what changed"],
+  },
+  {
+    name: "Feature Boost",
+    price: "Starting at $399",
+    time: "2–4 days",
+    bestFor: "Finish one feature end-to-end",
+    includes: ["Frontend + backend integration", "Edge cases + error handling", "Deploy-ready updates"],
+  },
+  {
+    name: "Launch Assist",
+    price: "Starting at $299",
+    time: "1–3 days",
+    bestFor: "Deploy, env vars, “works local but not live”",
+    includes: ["Deployment setup + troubleshooting", "Env var + build sanity checks", "Post-launch QA pass"],
+  },
+];
+
+const work = [
+  {
+    title: "Keith Mazza Portfolio",
+    context: "Personal portfolio site showcasing skills and projects.",
+    bullets: [
+      "Clean responsive layout and project presentation",
+      "Simple UX with clear navigation",
+      "Deployed on Netlify",
+    ],
+    tags: ["React", "Vite", "Netlify"],
+    links: [{ label: "Live site", href: "https://keith-mazza.netlify.app/" }],
+    emailTopic: "Portfolio site",
+  },
+  {
+    title: "Travel First Bali",
+    context: "Travel essentials + weather lookup app with curated tips.",
+    bullets: [
+      "Destination-based weather lookup",
+      "Card-based UI with dark mode support",
+      "Deployed on Netlify",
+    ],
+    tags: ["React", "APIs", "Netlify"],
+    links: [{ label: "Live site", href: "https://travel-first-bali.netlify.app/" }],
+    emailTopic: "Travel First app",
+  },
+  {
+    title: "Soothing Baby App",
+    context: "Calming content app with a friendly, mobile-first experience.",
+    bullets: [
+      "Feature-driven UI designed for quick use",
+      "Responsive layout and simple flows",
+      "Deployed on Netlify",
+    ],
+    tags: ["React", "UX", "Netlify"],
+    links: [{ label: "Live site", href: "https://soothingbabyapp.netlify.app/" }],
+    emailTopic: "Soothing Baby App",
+  },
+];
 
 export default function App() {
   return (
@@ -234,8 +222,7 @@ export default function App() {
           <div className="sectionHeader">
             <h2>Selected work</h2>
             <p className="muted">
-              A few examples of the kind of work we deliver—clean UX, stable systems, and real
-              momentum.
+              A few live examples—good UX, clean structure, and smooth deployments.
             </p>
           </div>
 
@@ -259,9 +246,27 @@ export default function App() {
                   ))}
                 </div>
 
-                <div className="workCta">
-                  <a className="button ghost" href={defaultMailto}>
-                    Request details
+                <div className="workCtaRow">
+                  {p.links.map((link) => (
+                    <a
+                      key={link.href}
+                      className="button ghost"
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+
+                  <a
+                    className="button primary"
+                    href={buildMailto({
+                      subjectSuffix: `Question about ${p.emailTopic}`,
+                      bodyIntro: `I’m reaching out about the ${p.title}.`,
+                    })}
+                  >
+                    Email about this
                   </a>
                 </div>
               </div>

@@ -235,31 +235,6 @@ a:hover {
   backdrop-filter: blur(6px);
 }
 
-label {
-  display: grid;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 12px;
-}
-
-input,
-textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.25);
-  color: var(--text);
-  font-size: 14px;
-  outline: none;
-}
-
-input:focus,
-textarea:focus {
-  border-color: rgba(88, 167, 255, 0.5);
-}
-
 .finePrint {
   margin: 12px 0 0;
   color: var(--muted);
@@ -270,31 +245,7 @@ textarea:focus {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-.hidden {
-  display: none;
-}
-
-.footer {
-  margin-top: 30px;
-  padding: 18px 18px 40px;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 13px;
-}
-
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  .twoCol {
-    grid-template-columns: 1fr;
-  }
-  .nav {
-    display: none;
-  }
-}
-
-/* --- Selected Work section --- */
+/* --- Shared helpers --- */
 .sectionHeader {
   display: grid;
   gap: 6px;
@@ -308,6 +259,7 @@ textarea:focus {
   max-width: 75ch;
 }
 
+/* --- Work section --- */
 .workGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -355,79 +307,14 @@ textarea:focus {
   background: rgba(255, 255, 255, 0.04);
 }
 
-.workCta {
-  margin-top: 2px;
-}
-
-@media (max-width: 900px) {
-  .workGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Shared helper */
-.sectionHeader {
-  display: grid;
-  gap: 6px;
-  margin-bottom: 14px;
-}
-
-.muted {
-  color: var(--muted);
-  margin: 0;
-  line-height: 1.6;
-  max-width: 75ch;
-}
-
-/* Work section */
-.workGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-.workCard {
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.07);
-  padding: 16px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(6px);
-  display: grid;
-  gap: 12px;
-  min-height: 260px;
-}
-
-.workTop h3 {
-  margin: 0 0 6px;
-  font-size: 15px;
-  color: var(--text);
-}
-
-.workList {
-  margin: 0;
-  padding-left: 18px;
-  color: var(--muted);
-  line-height: 1.65;
-  font-size: 14px;
-}
-
-.tagRow {
+.workCtaRow {
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
 }
 
-.tagRow span {
-  font-size: 12px;
-  color: var(--muted);
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-/* Packages section */
+/* --- Packages section --- */
 .pkgGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -490,12 +377,34 @@ textarea:focus {
   margin-top: 12px;
 }
 
+/* Footer */
+.footer {
+  margin-top: 30px;
+  padding: 18px 18px 40px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+
+  .pkgGrid {
+    grid-template-columns: 1fr;
+  }
+
   .workGrid {
     grid-template-columns: 1fr;
   }
-  .pkgGrid {
-    grid-template-columns: 1fr;
+
+  .nav {
+    display: none;
   }
 }
