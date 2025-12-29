@@ -31,7 +31,9 @@ const buildMailto = ({ subjectSuffix, bodyIntro }) => {
     `Budget range (optional):\n[ ]\n\n` +
     `Thanks,\n[Your Name]`;
 
-  return `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+    body
+  )}`;
 };
 
 const defaultMailto = buildMailto({});
@@ -62,39 +64,49 @@ const packages = [
 
 const work = [
   {
-    title: "Keith Mazza Portfolio",
-    context: "Personal portfolio site showcasing skills and projects.",
+    title: "My Portfolio",
+    context: "Personal portfolio showcasing skills and projects.",
     bullets: [
-      "Clean responsive layout and project presentation",
-      "Simple UX with clear navigation",
+      "Clean, responsive layout structured around key projects",
+      "Clear presentation of services and contact flow",
       "Deployed on Netlify",
     ],
     tags: ["React", "Vite", "Netlify"],
-    links: [{ label: "Live site", href: "https://keith-mazza.netlify.app/" }],
-    emailTopic: "Portfolio site",
+    links: [
+      { label: "Live site", href: "https://keith-mazza.netlify.app/" },
+      { label: "Source code", href: "https://github.com/kmazza-hub/My_portfolio" },
+    ],
+    emailTopic: "My Portfolio",
   },
   {
     title: "Travel First Bali",
-    context: "Travel essentials + weather lookup app with curated tips.",
+    context: "Travel essentials & weather app with curated tips and API use.",
     bullets: [
       "Destination-based weather lookup",
-      "Card-based UI with dark mode support",
-      "Deployed on Netlify",
+      "Organized travel tips and essentials",
+      "Deployed with Netlify from GitHub",
     ],
     tags: ["React", "APIs", "Netlify"],
-    links: [{ label: "Live site", href: "https://travel-first-bali.netlify.app/" }],
-    emailTopic: "Travel First app",
+    links: [
+      { label: "Live site", href: "https://travel-first-bali.netlify.app/" },
+      { label: "Source code", href: "https://github.com/kmazza-hub/travel-first" },
+    ],
+    emailTopic: "Travel First Bali",
   },
   {
     title: "Soothing Baby App",
-    context: "Calming content app with a friendly, mobile-first experience.",
+    context: "Calming content app with React frontend + backend.",
     bullets: [
-      "Feature-driven UI designed for quick use",
+      "Feature-driven UI designed for quick, parent-friendly use",
       "Responsive layout and simple flows",
-      "Deployed on Netlify",
+      "Frontend + backend repos available",
     ],
-    tags: ["React", "UX", "Netlify"],
-    links: [{ label: "Live site", href: "https://soothingbabyapp.netlify.app/" }],
+    tags: ["React", "Node", "Express", "MongoDB"],
+    links: [
+      { label: "Live site", href: "https://soothingbabyapp.netlify.app/" },
+      { label: "Frontend code", href: "https://github.com/kmazza-hub/soothing-baby-app" },
+      { label: "Backend code", href: "https://github.com/kmazza-hub/soothing-baby-backend" },
+    ],
     emailTopic: "Soothing Baby App",
   },
 ];
@@ -222,7 +234,7 @@ export default function App() {
           <div className="sectionHeader">
             <h2>Selected work</h2>
             <p className="muted">
-              A few live examples—good UX, clean structure, and smooth deployments.
+              Live examples—clean UX, stable systems, and smooth deployments.
             </p>
           </div>
 
