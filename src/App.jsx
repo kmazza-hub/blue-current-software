@@ -1,4 +1,9 @@
 import "./App.css";
+import { Routes, Route, Navigate, Link } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import NewRequest from "./pages/NewRequest";
 
 const services = [
   "React bug fixes & feature completion",
@@ -20,8 +25,10 @@ const baseSubject = "Project Inquiry - Blue Current Software";
 
 // ✅ STRIPE PAYMENT LINKS (Stripe → Payment Links → Copy link)
 const STRIPE_FIX_AND_SHIP_URL = "https://buy.stripe.com/14A7sD52lfH285fav64Vy00";
-const STRIPE_FEATURE_BOOST_URL = "https://buy.stripe.com/dRmbIT2Ud8eAdpz9r24Vy01"; 
+const STRIPE_FEATURE_BOOST_URL = "https://buy.stripe.com/dRmbIT2Ud8eAdpz9r24Vy01";
 const STRIPE_LAUNCH_ASSIST_URL = "https://buy.stripe.com/5kQcMXcuNeCY5X7eLm4Vy02";
+
+const isAuthed = () => Boolean(localStorage.getItem("bc_user"));
 
 const buildMailto = ({ subjectSuffix, bodyIntro }) => {
   const subject = subjectSuffix ? `${baseSubject} (${subjectSuffix})` : baseSubject;
@@ -119,34 +126,51 @@ const work = [
   },
 ];
 
-export default function App() {
+function Header() {
   return (
-    <div className="page">
-      <header className="header">
-        <div className="brand">
-          <div className="logoImageWrap">
-            <img
-              src="/blue-current-logo.png"
-              alt="Blue Current Software logo"
-              className="logoImage"
-            />
-          </div>
-          <div>
-            <div className="name">Blue Current Software</div>
-            <div className="tagline">Always in motion.</div>
-          </div>
+    <header className="header">
+      <div className="brand">
+        <div className="logoImageWrap">
+          <img
+            src="/blue-current-logo.png"
+            alt="Blue Current Software logo"
+            className="logoImage"
+          />
         </div>
+        <div>
+          <div className="name">Blue Current Software</div>
+          <div className="tagline">Always in motion.</div>
+        </div>
+      </div>
 
-        <nav className="nav">
-          <a href="#services">Services</a>
-          <a href="#packages">Packages</a>
-          <a href="#work">Work</a>
-          <a href="#how">How we work</a>
-          <a href="#contact" className="navCta">
-            Contact
-          </a>
-        </nav>
-      </header>
+      <nav className="nav">
+        <a href="/#services">Services</a>
+        <a href="/#packages">Packages</a>
+        <a href="/#work">Work</a>
+        <a href="/#how">How we work</a>
+        <a href="/#contact" className="navCta">
+          Contact
+        </a>
+        <Link to={isAuthed() ? "/dashboard" : "/login"} className="navCta">
+          Portal
+        </Link>
+      </nav>
+    </header>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="footer">
+      <div>© {new Date().getFullYear()} Blue Current Software. Always in motion.</div>
+    </footer>
+  );
+}
+
+function MainSite() {
+  return (
+    <>
+      <Header />
 
       <main>
         <section className="hero">
@@ -157,10 +181,10 @@ export default function App() {
           </p>
 
           <div className="heroCtas">
-            <a className="button primary" href="#contact">
+            <a className="button primary" href="/#contact">
               Get it moving
             </a>
-            <a className="button ghost" href="#packages">
+            <a className="button ghost" href="/#packages">
               View packages
             </a>
           </div>
@@ -200,56 +224,46 @@ export default function App() {
           </div>
 
           <div className="pkgGrid">
-            {packages.map((p) => {
-              const hasStripe = Boolean(p.stripeUrl);
-
-              return (
-                <div key={p.name} className="pkgCard">
-                  <div className="pkgTop">
-                    <h3>{p.name}</h3>
-                    <div className="pkgPrice">{p.price}</div>
-                    <div className="pkgMeta">{p.time}</div>
-                  </div>
-
-                  <p className="muted pkgBestFor">
-                    <strong>Best for:</strong> {p.bestFor}
-                  </p>
-
-                  <ul className="pkgList">
-                    {p.includes.map((i) => (
-                      <li key={i}>{i}</li>
-                    ))}
-                  </ul>
-
-                  <div className="pkgCtas">
-                    {hasStripe ? (
-                      <a
-                        className="button primary"
-                        href={p.stripeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Pay with Stripe
-                      </a>
-                    ) : (
-                      <button className="button primary" type="button" disabled>
-                        Stripe link coming soon
-                      </button>
-                    )}
-
-                    <a
-                      className="button ghost"
-                      href={buildMailto({
-                        subjectSuffix: p.name,
-                        bodyIntro: `I’m interested in the ${p.name} package. Please confirm scope and next steps.`,
-                      })}
-                    >
-                      Request invoice / scope
-                    </a>
-                  </div>
+            {packages.map((p) => (
+              <div key={p.name} className="pkgCard">
+                <div className="pkgTop">
+                  <h3>{p.name}</h3>
+                  <div className="pkgPrice">{p.price}</div>
+                  <div className="pkgMeta">{p.time}</div>
                 </div>
-              );
-            })}
+
+                <p className="muted pkgBestFor">
+                  <strong>Best for:</strong> {p.bestFor}
+                </p>
+
+                <ul className="pkgList">
+                  {p.includes.map((i) => (
+                    <li key={i}>{i}</li>
+                  ))}
+                </ul>
+
+                <div className="pkgCtas">
+                  <a
+                    className="button primary"
+                    href={p.stripeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Pay with Stripe
+                  </a>
+
+                  <a
+                    className="button ghost"
+                    href={buildMailto({
+                      subjectSuffix: p.name,
+                      bodyIntro: `I’m interested in the ${p.name} package. Please confirm scope and next steps.`,
+                    })}
+                  >
+                    Request invoice / scope
+                  </a>
+                </div>
+              </div>
+            ))}
           </div>
 
           <p className="finePrint pkgFine">
@@ -379,9 +393,34 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="footer">
-        <div>© {new Date().getFullYear()} Blue Current Software. Always in motion.</div>
-      </footer>
+      <Footer />
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <div className="page">
+      <Routes>
+        <Route path="/" element={<MainSite />} />
+
+        <Route
+          path="/login"
+          element={isAuthed() ? <Navigate to="/dashboard" replace /> : <Login />}
+        />
+
+        <Route
+          path="/dashboard"
+          element={isAuthed() ? <Dashboard /> : <Navigate to="/login" replace />}
+        />
+
+        <Route
+          path="/dashboard/new"
+          element={isAuthed() ? <NewRequest /> : <Navigate to="/login" replace />}
+        />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   );
 }
