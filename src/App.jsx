@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -23,12 +23,15 @@ const whoWeHelp = [
 const emailTo = "bluecurrentsoftware@gmail.com";
 const baseSubject = "Project Inquiry - Blue Current Software";
 
-// ✅ STRIPE PAYMENT LINKS (Stripe → Payment Links → Copy link)
+// ✅ STRIPE PAYMENT LINKS
 const STRIPE_FIX_AND_SHIP_URL = "https://buy.stripe.com/14A7sD52lfH285fav64Vy00";
 const STRIPE_FEATURE_BOOST_URL = "https://buy.stripe.com/dRmbIT2Ud8eAdpz9r24Vy01";
 const STRIPE_LAUNCH_ASSIST_URL = "https://buy.stripe.com/5kQcMXcuNeCY5X7eLm4Vy02";
 
-const isAuthed = () => Boolean(localStorage.getItem("bc_user"));
+const isAuthed = () => {
+  const v = localStorage.getItem("bc_user");
+  return Boolean(v && v.trim());
+};
 
 const buildMailto = ({ subjectSuffix, bodyIntro }) => {
   const subject = subjectSuffix ? `${baseSubject} (${subjectSuffix})` : baseSubject;
@@ -43,9 +46,7 @@ const buildMailto = ({ subjectSuffix, bodyIntro }) => {
     `Budget range (optional):\n[ ]\n\n` +
     `Thanks,\n[Your Name]`;
 
-  return `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-    body
-  )}`;
+  return `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 };
 
 const defaultMailto = buildMailto({});
@@ -96,11 +97,7 @@ const work = [
   {
     title: "Travel First Bali",
     context: "Travel essentials & weather app with curated tips and API use.",
-    bullets: [
-      "Destination-based weather lookup",
-      "Organized travel tips and essentials",
-      "Deployed with Netlify from GitHub",
-    ],
+    bullets: ["Destination-based weather lookup", "Organized travel tips and essentials", "Deployed with Netlify from GitHub"],
     tags: ["React", "APIs", "Netlify"],
     links: [
       { label: "Live site", href: "https://travel-first-bali.netlify.app/" },
@@ -111,11 +108,7 @@ const work = [
   {
     title: "Soothing Baby App",
     context: "Calming content app with React frontend + backend.",
-    bullets: [
-      "Feature-driven UI designed for quick, parent-friendly use",
-      "Responsive layout and simple flows",
-      "Frontend + backend repos available",
-    ],
+    bullets: ["Feature-driven UI designed for quick, parent-friendly use", "Responsive layout and simple flows", "Frontend + backend repos available"],
     tags: ["React", "Node", "Express", "MongoDB"],
     links: [
       { label: "Live site", href: "https://soothingbabyapp.netlify.app/" },
@@ -126,16 +119,33 @@ const work = [
   },
 ];
 
+// --- Guards that cannot bounce forever ---
+function Protected({ children }) {
+  const location = useLocation();
+  if (isAuthed()) return children;
+
+  // already at /login? don't spam navigate
+  if (location.pathname === "/login") return children;
+
+  return <Navigate to="/login" replace />;
+}
+
+function PublicOnly({ children }) {
+  const location = useLocation();
+  if (!isAuthed()) return children;
+
+  // already at /dashboard? don't spam navigate
+  if (location.pathname === "/dashboard") return children;
+
+  return <Navigate to="/dashboard" replace />;
+}
+
 function Header() {
   return (
     <header className="header">
       <div className="brand">
         <div className="logoImageWrap">
-          <img
-            src="/blue-current-logo.png"
-            alt="Blue Current Software logo"
-            className="logoImage"
-          />
+          <img src="/blue-current-logo.png" alt="Blue Current Software logo" className="logoImage" />
         </div>
         <div>
           <div className="name">Blue Current Software</div>
@@ -144,13 +154,12 @@ function Header() {
       </div>
 
       <nav className="nav">
-        <a href="/#services">Services</a>
-        <a href="/#packages">Packages</a>
-        <a href="/#work">Work</a>
-        <a href="/#how">How we work</a>
-        <a href="/#contact" className="navCta">
-          Contact
-        </a>
+        <a href="#services">Services</a>
+        <a href="#packages">Packages</a>
+        <a href="#work">Work</a>
+        <a href="#how">How we work</a>
+        <a href="#contact" className="navCta">Contact</a>
+
         <Link to={isAuthed() ? "/dashboard" : "/login"} className="navCta">
           Portal
         </Link>
@@ -181,21 +190,12 @@ function MainSite() {
           </p>
 
           <div className="heroCtas">
-            <a className="button primary" href="/#contact">
-              Get it moving
-            </a>
-            <a className="button ghost" href="/#packages">
-              View packages
-            </a>
+            <a className="button primary" href="#contact">Get it moving</a>
+            <a className="button ghost" href="#packages">View packages</a>
           </div>
 
           <div className="heroBadges" aria-label="Core capabilities">
-            <span>React</span>
-            <span>Node.js</span>
-            <span>Express</span>
-            <span>MongoDB</span>
-            <span>Deployments</span>
-            <span>Stripe</span>
+            <span>React</span><span>Node.js</span><span>Express</span><span>MongoDB</span><span>Deployments</span><span>Stripe</span>
           </div>
         </section>
 
@@ -205,10 +205,7 @@ function MainSite() {
             {services.map((s) => (
               <div key={s} className="card">
                 <h3>{s}</h3>
-                <p>
-                  Clear scope, clean implementation, and practical solutions that keep your product
-                  moving forward.
-                </p>
+                <p>Clear scope, clean implementation, and practical solutions that keep your product moving forward.</p>
               </div>
             ))}
           </div>
@@ -237,18 +234,11 @@ function MainSite() {
                 </p>
 
                 <ul className="pkgList">
-                  {p.includes.map((i) => (
-                    <li key={i}>{i}</li>
-                  ))}
+                  {p.includes.map((i) => <li key={i}>{i}</li>)}
                 </ul>
 
                 <div className="pkgCtas">
-                  <a
-                    className="button primary"
-                    href={p.stripeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a className="button primary" href={p.stripeUrl} target="_blank" rel="noopener noreferrer">
                     Pay with Stripe
                   </a>
 
@@ -266,9 +256,7 @@ function MainSite() {
             ))}
           </div>
 
-          <p className="finePrint pkgFine">
-            *Starting prices depend on scope. You’ll always get a clear plan before work begins.
-          </p>
+          <p className="finePrint pkgFine">*Starting prices depend on scope. You’ll always get a clear plan before work begins.</p>
         </section>
 
         <section className="section" id="work">
@@ -286,26 +274,16 @@ function MainSite() {
                 </div>
 
                 <ul className="workList">
-                  {p.bullets.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
+                  {p.bullets.map((b) => <li key={b}>{b}</li>)}
                 </ul>
 
                 <div className="tagRow" aria-label="Tech tags">
-                  {p.tags.map((t) => (
-                    <span key={t}>{t}</span>
-                  ))}
+                  {p.tags.map((t) => <span key={t}>{t}</span>)}
                 </div>
 
                 <div className="workCtaRow">
                   {p.links.map((link) => (
-                    <a
-                      key={link.href}
-                      className="button ghost"
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a key={link.href} className="button ghost" href={link.href} target="_blank" rel="noopener noreferrer">
                       {link.label}
                     </a>
                   ))}
@@ -330,10 +308,7 @@ function MainSite() {
           <div className="twoCol">
             <div className="card">
               <h3>Calm, clear, and direct</h3>
-              <p>
-                We communicate early and often. No surprises, no over-engineering—just steady
-                progress.
-              </p>
+              <p>We communicate early and often. No surprises, no over-engineering—just steady progress.</p>
               <ul className="list">
                 <li>Fast triage and honest estimates</li>
                 <li>Maintainable code over quick hacks</li>
@@ -344,11 +319,7 @@ function MainSite() {
             <div className="card">
               <h3>Who we help</h3>
               <p>We’re a great fit for teams that want reliability and speed without chaos.</p>
-              <ul className="list">
-                {whoWeHelp.map((w) => (
-                  <li key={w}>{w}</li>
-                ))}
-              </ul>
+              <ul className="list">{whoWeHelp.map((w) => <li key={w}>{w}</li>)}</ul>
             </div>
           </div>
         </section>
@@ -357,9 +328,7 @@ function MainSite() {
           <h2>Our philosophy</h2>
           <p>
             Progress comes from movement—not perfection. We help teams move forward when projects
-            stall, systems break, or ideas feel just out of reach. Through calm problem-solving,
-            thoughtful engineering, and continuous improvement, we bring momentum back to software
-            that matters.
+            stall, systems break, or ideas feel just out of reach.
           </p>
           <p className="emphasis">Always in motion.</p>
         </section>
@@ -370,24 +339,17 @@ function MainSite() {
 
           <div className="form">
             <div className="heroCtas" style={{ marginTop: 0 }}>
-              <a className="button primary" href={defaultMailto}>
-                Email Blue Current
-              </a>
-              <a className="button ghost" href={`mailto:${emailTo}`}>
-                Open blank email
-              </a>
+              <a className="button primary" href={defaultMailto}>Email Blue Current</a>
+              <a className="button ghost" href={`mailto:${emailTo}`}>Open blank email</a>
             </div>
 
             <p className="finePrint">
               Email:{" "}
-              <a href={`mailto:${emailTo}`} className="mono">
-                {emailTo}
-              </a>
+              <a href={`mailto:${emailTo}`} className="mono">{emailTo}</a>
             </p>
 
             <p className="finePrint">
-              Payments for standard packages are processed securely via Stripe. For custom scope, we
-              send a one-time Stripe invoice.
+              Payments for standard packages are processed securely via Stripe. For custom scope, we send a one-time Stripe invoice.
             </p>
           </div>
         </section>
@@ -406,17 +368,29 @@ export default function App() {
 
         <Route
           path="/login"
-          element={isAuthed() ? <Navigate to="/dashboard" replace /> : <Login />}
+          element={
+            <PublicOnly>
+              <Login />
+            </PublicOnly>
+          }
         />
 
         <Route
           path="/dashboard"
-          element={isAuthed() ? <Dashboard /> : <Navigate to="/login" replace />}
+          element={
+            <Protected>
+              <Dashboard />
+            </Protected>
+          }
         />
 
         <Route
           path="/dashboard/new"
-          element={isAuthed() ? <NewRequest /> : <Navigate to="/login" replace />}
+          element={
+            <Protected>
+              <NewRequest />
+            </Protected>
+          }
         />
 
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -387,3 +387,121 @@ a:hover {
     opacity: 0.045;
   }
 }
+
+/* =========================
+   FORMS (Login + New Request)
+   ========================= */
+
+label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  margin-top: 14px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text);
+  padding: 12px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(88, 167, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(88, 167, 255, 0.15);
+}
+
+select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.65) 50%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.65) 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 18px) calc(50% - 2px),
+    calc(100% - 13px) calc(50% - 2px),
+    0 0;
+  background-size: 6px 6px, 6px 6px, 100% 100%;
+  background-repeat: no-repeat;
+  padding-right: 34px;
+}
+
+.form h2 {
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 20px;
+  letter-spacing: 0.2px;
+}
+
+.form .muted {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Button polish */
+.button:active {
+  transform: translateY(1px);
+}
+
+button.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Small utility */
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Optional: form section dividers if you want to use them */
+.formDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 18px 0;
+}
+
+/* Responsive improvements for multi-column form rows */
+@media (max-width: 700px) {
+  .form {
+    padding: 14px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* helps mobile typing */
+  }
+}
+
+.formRowTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+@media (max-width: 700px) {
+  .formRowTwo {
+    grid-template-columns: 1fr;
+  }
+}

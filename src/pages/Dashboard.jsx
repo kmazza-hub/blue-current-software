@@ -1,16 +1,38 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useMemo } from "react";
 
 export default function Dashboard() {
-  const email = localStorage.getItem("bc_user");
   const navigate = useNavigate();
+  const email = (localStorage.getItem("bc_user") || "").trim();
 
-  const requests =
-    JSON.parse(localStorage.getItem(`bc_requests_${email}`)) || [];
+  // If not logged in, bounce to login
+  if (!email) return <Navigate to="/login" replace />;
 
-  const logout = () => {
-    localStorage.removeItem("bc_user");
-    navigate("/");
-  };
+  // Open mailto exactly once after submitting a request
+  useEffect(() => {
+    const mailto = sessionStorage.getItem("bc_open_mailto_once");
+    if (!mailto) return;
+
+    sessionStorage.removeItem("bc_open_mailto_once");
+
+    // This triggers the email compose without causing router thrash
+    window.location.href = mailto;
+  }, []);
+
+  const requests = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem(`bc_requests_${email}`)) || [];
+    } catch {
+      return [];
+    }
+  }, [email]);
+
+const logout = () => {
+  localStorage.removeItem("bc_user");
+  sessionStorage.removeItem("bc_open_mailto_once");
+  window.location.assign("/"); // ✅ bypasses react-router if it’s stuck
+};
+
 
   return (
     <div className="page">
@@ -32,7 +54,7 @@ export default function Dashboard() {
             <p className="muted">No requests yet.</p>
           ) : (
             requests.map((r, i) => (
-              <div key={i} className="card" style={{ marginBottom: 12 }}>
+              <div key={`${r.title}-${i}`} className="card" style={{ marginBottom: 12 }}>
                 <h3>{r.title}</h3>
                 <p className="muted">{r.category}</p>
                 <p>{r.details}</p>
