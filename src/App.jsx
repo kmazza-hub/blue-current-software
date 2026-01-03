@@ -18,6 +18,11 @@ const whoWeHelp = [
 const emailTo = "bluecurrentsoftware@gmail.com";
 const baseSubject = "Project Inquiry - Blue Current Software";
 
+// ✅ PASTE YOUR STRIPE PAYMENT LINKS HERE (from Stripe → Payment Links)
+const STRIPE_FIX_AND_SHIP_URL = "PASTE_STRIPE_PAYMENT_LINK_HERE";
+const STRIPE_FEATURE_BOOST_URL = "PASTE_STRIPE_PAYMENT_LINK_HERE";
+const STRIPE_LAUNCH_ASSIST_URL = "PASTE_STRIPE_PAYMENT_LINK_HERE";
+
 const buildMailto = ({ subjectSuffix, bodyIntro }) => {
   const subject = subjectSuffix ? `${baseSubject} (${subjectSuffix})` : baseSubject;
 
@@ -45,6 +50,7 @@ const packages = [
     time: "Same day / 24–48 hours",
     bestFor: "Bug fixes, broken UI, failing builds, small tweaks",
     includes: ["Quick triage + plan", "Fixes shipped + tested", "Short summary of what changed"],
+    stripeUrl: STRIPE_FIX_AND_SHIP_URL,
   },
   {
     name: "Feature Boost",
@@ -52,6 +58,7 @@ const packages = [
     time: "2–4 days",
     bestFor: "Finish one feature end-to-end",
     includes: ["Frontend + backend integration", "Edge cases + error handling", "Deploy-ready updates"],
+    stripeUrl: STRIPE_FEATURE_BOOST_URL,
   },
   {
     name: "Launch Assist",
@@ -59,6 +66,7 @@ const packages = [
     time: "1–3 days",
     bestFor: "Deploy, env vars, “works local but not live”",
     includes: ["Deployment setup + troubleshooting", "Env var + build sanity checks", "Post-launch QA pass"],
+    stripeUrl: STRIPE_LAUNCH_ASSIST_URL,
   },
 ];
 
@@ -114,32 +122,31 @@ const work = [
 export default function App() {
   return (
     <div className="page">
-    <header className="header">
-  <div className="brand">
-    <div className="logoImageWrap">
-      <img
-        src="/blue-current-logo.png"
-        alt="Blue Current Software logo"
-        className="logoImage"
-      />
-    </div>
-    <div>
-      <div className="name">Blue Current Software</div>
-      <div className="tagline">Always in motion.</div>
-    </div>
-  </div>
+      <header className="header">
+        <div className="brand">
+          <div className="logoImageWrap">
+            <img
+              src="/blue-current-logo.png"
+              alt="Blue Current Software logo"
+              className="logoImage"
+            />
+          </div>
+          <div>
+            <div className="name">Blue Current Software</div>
+            <div className="tagline">Always in motion.</div>
+          </div>
+        </div>
 
-  <nav className="nav">
-    <a href="#services">Services</a>
-    <a href="#packages">Packages</a>
-    <a href="#work">Work</a>
-    <a href="#how">How we work</a>
-    <a href="#contact" className="navCta">
-      Contact
-    </a>
-  </nav>
-</header>
-
+        <nav className="nav">
+          <a href="#services">Services</a>
+          <a href="#packages">Packages</a>
+          <a href="#work">Work</a>
+          <a href="#how">How we work</a>
+          <a href="#contact" className="navCta">
+            Contact
+          </a>
+        </nav>
+      </header>
 
       <main>
         <section className="hero">
@@ -164,6 +171,7 @@ export default function App() {
             <span>Express</span>
             <span>MongoDB</span>
             <span>Deployments</span>
+            <span>Stripe</span>
           </div>
         </section>
 
@@ -182,13 +190,12 @@ export default function App() {
           </div>
         </section>
 
-        {/* Packages */}
         <section className="section" id="packages">
           <div className="sectionHeader">
             <h2>Packages</h2>
             <p className="muted">
-              Budget-friendly starting rates. Fast turnaround. Clear scope. If you’re stuck, we’ll
-              get it moving.
+              Budget-friendly starting rates. Fast turnaround. Clear scope.
+              Pay securely via Stripe for standard packages, or request an invoice for custom work.
             </p>
           </div>
 
@@ -212,17 +219,25 @@ export default function App() {
                 </ul>
 
                 <div className="pkgCtas">
+                  {/* Stripe payment link */}
                   <a
                     className="button primary"
+                    href={p.stripeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Pay with Stripe
+                  </a>
+
+                  {/* Invoice / scope email */}
+                  <a
+                    className="button ghost"
                     href={buildMailto({
                       subjectSuffix: p.name,
-                      bodyIntro: `I’m interested in the ${p.name} package.`,
+                      bodyIntro: `I’m interested in the ${p.name} package. Please confirm scope and next steps.`,
                     })}
                   >
-                    Choose {p.name}
-                  </a>
-                  <a className="button ghost" href="#contact">
-                    Ask a question
+                    Request invoice / scope
                   </a>
                 </div>
               </div>
@@ -234,7 +249,6 @@ export default function App() {
           </p>
         </section>
 
-        {/* Work */}
         <section className="section" id="work">
           <div className="sectionHeader">
             <h2>Selected work</h2>
@@ -349,6 +363,11 @@ export default function App() {
               <a href={`mailto:${emailTo}`} className="mono">
                 {emailTo}
               </a>
+            </p>
+
+            <p className="finePrint">
+              Payments for standard packages are processed securely via Stripe. For custom scope, we
+              send a one-time Stripe invoice.
             </p>
           </div>
         </section>
