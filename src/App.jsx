@@ -18,10 +18,10 @@ const whoWeHelp = [
 const emailTo = "bluecurrentsoftware@gmail.com";
 const baseSubject = "Project Inquiry - Blue Current Software";
 
-// ✅ PASTE YOUR STRIPE PAYMENT LINKS HERE (from Stripe → Payment Links)
-const STRIPE_FIX_AND_SHIP_URL = "PASTE_STRIPE_PAYMENT_LINK_HERE";
-const STRIPE_FEATURE_BOOST_URL = "PASTE_STRIPE_PAYMENT_LINK_HERE";
-const STRIPE_LAUNCH_ASSIST_URL = "PASTE_STRIPE_PAYMENT_LINK_HERE";
+// ✅ STRIPE PAYMENT LINKS (Stripe → Payment Links → Copy link)
+const STRIPE_FIX_AND_SHIP_URL = "https://buy.stripe.com/14A7sD52lfH285fav64Vy00";
+const STRIPE_FEATURE_BOOST_URL = "https://buy.stripe.com/dRmbIT2Ud8eAdpz9r24Vy01"; 
+const STRIPE_LAUNCH_ASSIST_URL = "https://buy.stripe.com/5kQcMXcuNeCY5X7eLm4Vy02";
 
 const buildMailto = ({ subjectSuffix, bodyIntro }) => {
   const subject = subjectSuffix ? `${baseSubject} (${subjectSuffix})` : baseSubject;
@@ -194,54 +194,62 @@ export default function App() {
           <div className="sectionHeader">
             <h2>Packages</h2>
             <p className="muted">
-              Budget-friendly starting rates. Fast turnaround. Clear scope.
-              Pay securely via Stripe for standard packages, or request an invoice for custom work.
+              Budget-friendly starting rates. Fast turnaround. Clear scope. Pay securely via Stripe
+              for standard packages, or request an invoice for custom work.
             </p>
           </div>
 
           <div className="pkgGrid">
-            {packages.map((p) => (
-              <div key={p.name} className="pkgCard">
-                <div className="pkgTop">
-                  <h3>{p.name}</h3>
-                  <div className="pkgPrice">{p.price}</div>
-                  <div className="pkgMeta">{p.time}</div>
+            {packages.map((p) => {
+              const hasStripe = Boolean(p.stripeUrl);
+
+              return (
+                <div key={p.name} className="pkgCard">
+                  <div className="pkgTop">
+                    <h3>{p.name}</h3>
+                    <div className="pkgPrice">{p.price}</div>
+                    <div className="pkgMeta">{p.time}</div>
+                  </div>
+
+                  <p className="muted pkgBestFor">
+                    <strong>Best for:</strong> {p.bestFor}
+                  </p>
+
+                  <ul className="pkgList">
+                    {p.includes.map((i) => (
+                      <li key={i}>{i}</li>
+                    ))}
+                  </ul>
+
+                  <div className="pkgCtas">
+                    {hasStripe ? (
+                      <a
+                        className="button primary"
+                        href={p.stripeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Pay with Stripe
+                      </a>
+                    ) : (
+                      <button className="button primary" type="button" disabled>
+                        Stripe link coming soon
+                      </button>
+                    )}
+
+                    <a
+                      className="button ghost"
+                      href={buildMailto({
+                        subjectSuffix: p.name,
+                        bodyIntro: `I’m interested in the ${p.name} package. Please confirm scope and next steps.`,
+                      })}
+                    >
+                      Request invoice / scope
+                    </a>
+                  </div>
                 </div>
-
-                <p className="muted pkgBestFor">
-                  <strong>Best for:</strong> {p.bestFor}
-                </p>
-
-                <ul className="pkgList">
-                  {p.includes.map((i) => (
-                    <li key={i}>{i}</li>
-                  ))}
-                </ul>
-
-                <div className="pkgCtas">
-                  {/* Stripe payment link */}
-                  <a
-                    className="button primary"
-                    href={p.stripeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Pay with Stripe
-                  </a>
-
-                  {/* Invoice / scope email */}
-                  <a
-                    className="button ghost"
-                    href={buildMailto({
-                      subjectSuffix: p.name,
-                      bodyIntro: `I’m interested in the ${p.name} package. Please confirm scope and next steps.`,
-                    })}
-                  >
-                    Request invoice / scope
-                  </a>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <p className="finePrint pkgFine">
@@ -252,9 +260,7 @@ export default function App() {
         <section className="section" id="work">
           <div className="sectionHeader">
             <h2>Selected work</h2>
-            <p className="muted">
-              Live examples—clean UX, stable systems, and smooth deployments.
-            </p>
+            <p className="muted">Live examples—clean UX, stable systems, and smooth deployments.</p>
           </div>
 
           <div className="workGrid">
