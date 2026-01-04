@@ -505,3 +505,13 @@ button.button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+.badge { 
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badgeBlue { border-color: rgba(70, 160, 255, 0.35); background: rgba(70, 160, 255, 0.12); }
+.badgeAmber { border-color: rgba(255, 196, 90, 0.35); background: rgba(255, 196, 90, 0.12); }
+.badgeGreen { border-color: rgba(120, 255, 170, 0.25); background: rgba(120, 255, 170, 0.10); }

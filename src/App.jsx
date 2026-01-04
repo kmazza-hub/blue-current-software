@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NewRequest from "./pages/NewRequest";
+import Paid from "./pages/Paid";
 
 const services = [
   "React bug fixes & feature completion",
@@ -365,6 +366,9 @@ export default function App() {
     <div className="page">
       <Routes>
         <Route path="/" element={<MainSite />} />
+
+        {/* ✅ Stripe success redirect page */}
+        <Route path="/paid" element={<Paid />} />
 
         <Route
           path="/login"

@@ -1,15 +1,28 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const [email, setEmail] = useState("");
 
-  // If already logged in, bounce straight to dashboard
+  // Read returnTo from query string (ex: /login?returnTo=/dashboard/new?paid=Fix%20%26%20Ship)
+  const returnTo = useMemo(() => {
+    const rt = params.get("returnTo");
+    return rt && rt.trim() ? rt : "/dashboard";
+  }, [params]);
+
+  const isAuthed = () => {
+    const v = localStorage.getItem("bc_user");
+    return Boolean(v && v.trim());
+  };
+
+  // If already logged in, go where we intended (or dashboard)
   useEffect(() => {
-    const user = localStorage.getItem("bc_user");
-    if (user) navigate("/dashboard", { replace: true });
-  }, [navigate]);
+    if (isAuthed()) {
+      navigate(returnTo, { replace: true });
+    }
+  }, [navigate, returnTo]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,13 +32,13 @@ export default function Login() {
 
     localStorage.setItem("bc_user", trimmed);
 
-    // Navigate immediately
-    navigate("/dashboard", { replace: true });
+    // Navigate to intended destination (or dashboard)
+    navigate(returnTo, { replace: true });
   };
 
   return (
     <div className="page">
-      <div className="form" style={{ maxWidth: 520, margin: "80px auto" }}>
+      <div className="form" style={{ maxWidth: 560, margin: "80px auto" }}>
         <h2>Client Login</h2>
         <p className="muted">Enter your email to access your project dashboard.</p>
 
@@ -41,10 +54,20 @@ export default function Login() {
             />
           </label>
 
-          <button className="button primary" type="submit">
-            Continue
-          </button>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 14 }}>
+            <button className="button primary" type="submit">
+              Continue
+            </button>
+
+            <Link className="button ghost" to="/">
+              Back to site
+            </Link>
+          </div>
         </form>
+
+        <p className="finePrint" style={{ marginTop: 14 }}>
+          This is a simple client portal login (email-only) for now.
+        </p>
       </div>
     </div>
   );

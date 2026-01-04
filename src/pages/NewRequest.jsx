@@ -1,217 +1,270 @@
-import { useMemo, useState } from "react";
-import { Navigate, useNavigate, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { addRequest } from "../utils/requests";
 
-const EMAIL_TO = "bluecurrentsoftware@gmail.com";
+// ✅ STRIPE PAYMENT LINKS (Stripe → Payment Links → Copy link)
+const STRIPE_FIX_AND_SHIP_URL = "https://buy.stripe.com/14A7sD52lfH285fav64Vy00";
+const STRIPE_FEATURE_BOOST_URL = "https://buy.stripe.com/dRmbIT2Ud8eAdpz9r24Vy01";
+const STRIPE_LAUNCH_ASSIST_URL = "https://buy.stripe.com/5kQcMXcuNeCY5X7eLm4Vy02";
 
-function buildMailto({ fromEmail, title, category, priority, deadline, details }) {
-  const subject = `New Client Request (${category})`;
-  const bodyLines = [
-    `From: ${fromEmail}`,
-    ``,
-    `Title: ${title}`,
-    `Category: ${category}`,
-    `Priority: ${priority}`,
-    `Preferred deadline: ${deadline || "Not specified"}`,
-    ``,
-    `Details:`,
-    details,
-  ];
+const PACKAGE_OPTIONS = [
+  { label: "Fix & Ship", value: "Fix & Ship", url: STRIPE_FIX_AND_SHIP_URL, hint: "Bug fix + deploy support." },
+  { label: "Feature Boost", value: "Feature Boost", url: STRIPE_FEATURE_BOOST_URL, hint: "Finish a feature fast." },
+  { label: "Launch Assist", value: "Launch Assist", url: STRIPE_LAUNCH_ASSIST_URL, hint: "Prep, stabilize, ship." },
+];
 
-  return `mailto:${EMAIL_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-    bodyLines.join("\n")
-  )}`;
-}
+const TYPES = ["Fix & Ship", "Feature Boost", "Launch Assist", "Other"];
+const PRIORITIES = ["Low", "Normal", "High", "Urgent"];
+
+const getUserEmail = () => localStorage.getItem("bc_user") || "";
+
+const newId = () => {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
 
 export default function NewRequest() {
   const navigate = useNavigate();
-  const email = (localStorage.getItem("bc_user") || "").trim();
+  const email = getUserEmail();
 
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Bug Fix");
+  const [params] = useSearchParams();
+
+  // Accept either ?paid= or ?package=
+  const paidFromUrl = params.get("paid") || params.get("package") || "";
+
+  const normalizedPaidFromUrl = useMemo(() => {
+    const v = decodeURIComponent(paidFromUrl || "").trim();
+    if (!v) return "";
+    const match = PACKAGE_OPTIONS.find((p) => p.value === v);
+    return match ? match.value : "";
+  }, [paidFromUrl]);
+
+  // Pull from localStorage (used when user had to login first)
+  const paidFromStorage = useMemo(() => {
+    const v = (localStorage.getItem("bc_paid_package") || "").trim();
+    const match = PACKAGE_OPTIONS.find((p) => p.value === v);
+    return match ? match.value : "";
+  }, []);
+
+  // Choose best initial package
+  const initialPackage = normalizedPaidFromUrl || paidFromStorage || "";
+
+  const [selectedPackage, setSelectedPackage] = useState(initialPackage);
+  const [type, setType] = useState(initialPackage || "Fix & Ship");
   const [priority, setPriority] = useState("Normal");
-  const [deadline, setDeadline] = useState("");
+  const [projectLink, setProjectLink] = useState("");
   const [details, setDetails] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!email) return <Navigate to="/login" replace />;
+  const packageObj = PACKAGE_OPTIONS.find((p) => p.value === selectedPackage) || null;
 
-  const trimmedTitle = title.trim();
-  const trimmedDetails = details.trim();
+  // ✅ Persist paid package so it survives login / refresh
+  useEffect(() => {
+    if (normalizedPaidFromUrl) {
+      localStorage.setItem("bc_paid_package", normalizedPaidFromUrl);
+      setSelectedPackage(normalizedPaidFromUrl);
+      if (TYPES.includes(normalizedPaidFromUrl)) setType(normalizedPaidFromUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [normalizedPaidFromUrl]);
 
-  const isValid = useMemo(() => {
-    return trimmedTitle.length >= 4 && trimmedDetails.length >= 20;
-  }, [trimmedTitle, trimmedDetails]);
+  // Keep type aligned when package changes (unless user chooses Other)
+  useEffect(() => {
+    if (selectedPackage && TYPES.includes(selectedPackage)) {
+      setType(selectedPackage);
+    }
+  }, [selectedPackage]);
 
-  const detailsCount = details.length;
-  const detailsHint =
-    detailsCount < 20
-      ? `Add a little more detail (${20 - detailsCount} more characters).`
-      : "Good detail — thank you.";
+  const canSubmit = type && priority && details.trim().length >= 10;
+
+  const handlePayAndStart = () => {
+    if (!packageObj) return;
+    window.open(packageObj.url, "_blank", "noopener,noreferrer");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!isValid || isSubmitting) return;
-
-    setIsSubmitting(true);
-
-    // Save request
-    let existing = [];
-    try {
-      existing = JSON.parse(localStorage.getItem(`bc_requests_${email}`)) || [];
-    } catch {
-      existing = [];
-    }
+    if (!canSubmit) return;
 
     const request = {
-      title: trimmedTitle,
-      category,
+      id: newId(),
+      type,
       priority,
-      deadline: deadline || null,
-      details: trimmedDetails,
-      createdAt: new Date().toISOString(),
+      projectLink: projectLink.trim(),
+      details: details.trim(),
       status: "Submitted",
+      createdAt: new Date().toISOString(),
+      packagePaid: selectedPackage || localStorage.getItem("bc_paid_package") || null,
     };
 
-    existing.push(request);
-    localStorage.setItem(`bc_requests_${email}`, JSON.stringify(existing));
+    addRequest(email, request);
 
-    // Queue one-time email compose on Dashboard
-    const mailto = buildMailto({
-      fromEmail: email,
-      title: request.title,
-      category: request.category,
-      priority: request.priority,
-      deadline: request.deadline,
-      details: request.details,
-    });
-
-    sessionStorage.setItem("bc_open_mailto_once", mailto);
+    // Optional: clear stored paid package after a successful submission
+    localStorage.removeItem("bc_paid_package");
 
     navigate("/dashboard", { replace: true });
   };
 
   return (
     <div className="page">
-      <div className="form" style={{ maxWidth: 760, margin: "60px auto" }}>
-        {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
-          <div>
-            <h2 style={{ marginBottom: 6 }}>Submit a new request</h2>
-            <p className="muted" style={{ marginTop: 0 }}>
-              Share what you need — we’ll review it and reply quickly with next steps.
-            </p>
+      <div className="header" style={{ marginBottom: 0 }}>
+        <div className="brand">
+          <div className="logoImageWrap">
+            <img
+              src="/blue-current-logo.png"
+              alt="Blue Current Software logo"
+              className="logoImage"
+            />
           </div>
+          <div>
+            <div className="name">Blue Current Software</div>
+            <div className="tagline">Client Portal</div>
+          </div>
+        </div>
 
-          <Link className="button ghost" to="/dashboard">
+        <nav className="nav">
+          <Link to="/dashboard" className="navCta">
             Back to dashboard
           </Link>
-        </div>
+          <Link to="/" className="navCta">
+            Back to site
+          </Link>
+        </nav>
+      </div>
 
-        {/* Info strip */}
-        <div
-          className="card"
-          style={{
-            marginTop: 18,
-            padding: 16,
-            borderRadius: 14,
-          }}
-        >
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
-            <span className="muted">Logged in as:</span>
-            <span className="mono">{email}</span>
+      <main>
+        <section className="section" style={{ paddingTop: 32 }}>
+          <h2>New Request</h2>
+          <p className="muted">
+            Logged in as {email}. Choose what you need, pay if needed, and submit your request.
+          </p>
+
+          {/* ✅ Dropdown Intake */}
+          <div className="card" style={{ marginTop: 18 }}>
+            <h3 style={{ marginBottom: 6 }}>Start with a package</h3>
+            <p className="muted" style={{ marginTop: 0 }}>
+              Select a service package. You can pay now, then submit your details below.
+            </p>
+
+            <div style={{ display: "grid", gap: 12, marginTop: 12 }}>
+              <label>
+                Package
+                <select
+                  value={selectedPackage}
+                  onChange={(e) => {
+                    const next = e.target.value;
+                    setSelectedPackage(next);
+
+                    if (next) localStorage.setItem("bc_paid_package", next);
+                    else localStorage.removeItem("bc_paid_package");
+                  }}
+                >
+                  <option value="">Select a package…</option>
+                  {PACKAGE_OPTIONS.map((p) => (
+                    <option key={p.value} value={p.value}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              {packageObj ? (
+                <div className="muted" style={{ fontSize: 14 }}>
+                  {packageObj.hint}
+                </div>
+              ) : (
+                <div className="muted" style={{ fontSize: 14 }}>
+                  You can also skip payment and just submit a request below.
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <button
+                  className="button primary"
+                  type="button"
+                  onClick={handlePayAndStart}
+                  disabled={!packageObj}
+                  title={!packageObj ? "Select a package first" : "Open Stripe checkout"}
+                >
+                  Pay & Start
+                </button>
+
+                {packageObj ? (
+                  <a className="button ghost" href={packageObj.url} target="_blank" rel="noreferrer">
+                    Open checkout link
+                  </a>
+                ) : null}
+              </div>
+
+              <p className="finePrint" style={{ marginTop: 6 }}>
+                After payment, return here and submit the request details below. Your dashboard will show the package next to the request.
+              </p>
+            </div>
           </div>
 
-          <div className="muted" style={{ marginTop: 10, lineHeight: 1.4 }}>
-            <strong>What happens next:</strong> after you submit, your email client will open with a pre-filled message.
-            Send it, and we’ll confirm scope + timeline.
-          </div>
-        </div>
+          {/* ✅ Request Form */}
+          <form className="form" onSubmit={handleSubmit} style={{ marginTop: 18 }}>
+            <label>
+              Request type
+              <select value={type} onChange={(e) => setType(e.target.value)} required>
+                {TYPES.map((t) => (
+                  <option value={t} key={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} style={{ marginTop: 18 }}>
-          {/* Title */}
-          <label>
-            Request title <span className="muted">(short + clear)</span>
-            <input
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Login button stuck / Stripe link not opening / Deploy failing on Netlify"
-              maxLength={80}
-            />
-          </label>
+            <label>
+              Priority
+              <select value={priority} onChange={(e) => setPriority(e.target.value)} required>
+                {PRIORITIES.map((p) => (
+                  <option value={p} key={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-     {/* Two-column row */}
-<div className="formRowTwo">
-  <label>
-    Category
-    <select value={category} onChange={(e) => setCategory(e.target.value)}>
-      <option>Bug Fix</option>
-      <option>Feature</option>
-      <option>Deployment</option>
-      <option>Other</option>
-    </select>
-  </label>
+            <label>
+              Project link (GitHub / live site / Loom)
+              <input
+                type="url"
+                inputMode="url"
+                placeholder="https://github.com/... or https://yourapp.netlify.app"
+                value={projectLink}
+                onChange={(e) => setProjectLink(e.target.value)}
+              />
+            </label>
 
-  <label>
-    Priority
-    <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-      <option>Low</option>
-      <option>Normal</option>
-      <option>High</option>
-      <option>Urgent</option>
-    </select>
-  </label>
-</div>
+            <label>
+              What do you need help with?
+              <textarea
+                rows="7"
+                placeholder={
+                  "What’s broken or missing?\nWhat should it do instead?\nAny errors, screenshots, or steps to reproduce?\n\nThe more specific, the faster we ship."
+                }
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+                required
+              />
+            </label>
 
+            {selectedPackage ? (
+              <p className="finePrint" style={{ marginTop: -6 }}>
+                Package selected: <span className="mono">{selectedPackage}</span>
+              </p>
+            ) : null}
 
-          {/* Deadline */}
-          <label style={{ marginTop: 12 }}>
-            Preferred deadline <span className="muted">(optional)</span>
-            <input
-              type="date"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-            />
-          </label>
-
-          {/* Details */}
-          <label style={{ marginTop: 12 }}>
-            Details <span className="muted">(what’s broken + what “done” looks like)</span>
-            <textarea
-              rows="6"
-              required
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              placeholder={
-                "What’s happening?\nWhat did you expect instead?\nAny errors / screenshots?\nLink to repo or live site?"
-              }
-            />
-          </label>
-
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginTop: 8 }}>
-            <div className="muted">{detailsHint}</div>
-            <div className="muted">{detailsCount}/800</div>
-          </div>
-
-          {/* Actions */}
-          <div className="heroCtas" style={{ marginTop: 18 }}>
-            <button className="button primary" type="submit" disabled={!isValid || isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit request"}
+            <button className="button primary" type="submit" disabled={!canSubmit}>
+              Submit request
             </button>
 
-            <Link className="button ghost" to="/dashboard">
-              Cancel
-            </Link>
-          </div>
-
-          {!isValid && (
-            <p className="muted" style={{ marginTop: 12 }}>
-              Tip: add a clearer title and at least a couple sentences of details so we can scope quickly.
+            <p className="finePrint">
+              Tip: include steps to reproduce, expected result, and any console errors.
             </p>
-          )}
-        </form>
-      </div>
+          </form>
+        </section>
+      </main>
     </div>
   );
 }
